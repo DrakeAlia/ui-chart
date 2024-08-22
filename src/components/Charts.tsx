@@ -1,6 +1,7 @@
 "use client";
 
 import { Bar, BarChart, CartesianGrid, LineChart, XAxis } from "recharts";
+import { useTheme } from "next-themes";
 
 import {
   Card,
@@ -27,7 +28,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Monitor } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Moon, Sun, Laptop } from "lucide-react";
+
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
@@ -57,17 +66,40 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function Charts() {
+  const { theme, setTheme } = useTheme();
+
   return (
     <Card>
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
-          <CardTitle>
-            Chart UI/Test Component
-          </CardTitle>
+          <CardTitle>Chart UI/Test Component</CardTitle>
           <CardDescription>
             Showing total of desktop and mobile users for the past 6 months
           </CardDescription>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setTheme("light")}>
+              <Sun className="mr-2 h-4 w-4" />
+              Light
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme("dark")}>
+              <Moon className="mr-2 h-4 w-4" />
+              Dark
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme("system")}>
+              <Laptop className="mr-2 h-4 w-4" />
+              System
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
