@@ -1,5 +1,6 @@
 import { ChartArea } from "@/components/ChartArea";
 import { Charts } from "@/components/Charts";
+import { PieChartWheel } from "@/components/PieChartWheel";
 
 export default function Home() {
   return (
@@ -9,6 +10,9 @@ export default function Home() {
       </div>
       <div>
         <ChartArea />
+      </div>
+      <div>
+        <PieChartWheel />
       </div>
     </div>
   );
