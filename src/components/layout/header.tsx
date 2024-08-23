@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ModeToggle } from "@/components/layout/Mode-Toggle";
 
 export function Header() {
