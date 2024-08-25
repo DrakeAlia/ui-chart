@@ -10,8 +10,6 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
-import { useTheme } from "next-themes";
-import { motion } from "framer-motion";
 
 import {
   Card,
@@ -30,35 +28,34 @@ import {
 } from "@/components/ui/chart";
 
 import { TrendingUp, Coffee, Leaf } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const chartData = [
-  { month: "January", espresso: 186, latte: 80, tea: 120 },
-  { month: "February", espresso: 305, latte: 200, tea: 150 },
-  { month: "March", espresso: 237, latte: 120, tea: 190 },
-  { month: "April", espresso: 173, latte: 190, tea: 220 },
-  { month: "May", espresso: 209, latte: 130, tea: 180 },
-  { month: "June", espresso: 214, latte: 140, tea: 160 },
+  { month: "January", Espresso: 186, Latte: 80, Tea: 120 },
+  { month: "February", Espresso: 305, Latte: 200, Tea: 150 },
+  { month: "March", Espresso: 237, Latte: 120, Tea: 190 },
+  { month: "April", Espresso: 173, Latte: 190, Tea: 220 },
+  { month: "May", Espresso: 209, Latte: 130, Tea: 180 },
+  { month: "June", Espresso: 214, Latte: 140, Tea: 160 },
 ];
 
 const chartConfig = {
-  espresso: {
+  Espresso: {
     label: "Espresso",
     color: "hsl(var(--chart-1))",
   },
-  latte: {
+  Latte: {
     label: "Latte",
     color: "hsl(var(--chart-2))",
   },
-  tea: {
+  Tea: {
     label: "Tea",
     color: "hsl(var(--chart-3))",
   },
 } satisfies ChartConfig;
 
 export function CoffeeChart() {
-  const { theme } = useTheme();
   const [hoveredBar, setHoveredBar] = useState<string | null>(null);
-
   const CustomTooltip: React.FC<{
     active?: boolean;
     payload?: Array<{
@@ -66,6 +63,7 @@ export function CoffeeChart() {
       value: number;
       color: string;
     }>;
+
     label?: string;
   }> = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -85,12 +83,12 @@ export function CoffeeChart() {
 
   return (
     <Card className="overflow-hidden">
-      <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row bg-gradient-to-r from-[hsl(var(--chart-1))] to-[hsl(var(--chart-3))] text-white">
+      <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row bg-background text-foreground">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
           <CardTitle className="text-2xl font-bold">
             Global Beverage Trends
           </CardTitle>
-          <CardDescription className="text-gray-200">
+          <CardDescription>
             Espresso, Latte, and Tea Consumption (Past 6 Months)
           </CardDescription>
         </div>
@@ -110,144 +108,82 @@ export function CoffeeChart() {
               <Tooltip content={<CustomTooltip />} />
               <ChartLegend content={<ChartLegendContent />} />
               <Bar
-                dataKey="espresso"
-                fill="url(#espressoGradient)"
+                dataKey="Espresso"
+                fill="hsl(var(--chart-1))"
                 radius={[4, 4, 0, 0]}
-                onMouseEnter={() => setHoveredBar("espresso")}
+                onMouseEnter={() => setHoveredBar("Espresso")}
                 onMouseLeave={() => setHoveredBar(null)}
-              >
-                {chartData.map((entry, index) => (
-                  <motion.rect
-                    key={`espresso-${index}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  />
-                ))}
-              </Bar>
+              />
               <Bar
-                dataKey="latte"
-                fill="url(#latteGradient)"
+                dataKey="Latte"
+                fill="hsl(var(--chart-2))"
                 radius={[4, 4, 0, 0]}
-                onMouseEnter={() => setHoveredBar("latte")}
+                onMouseEnter={() => setHoveredBar("Latte")}
                 onMouseLeave={() => setHoveredBar(null)}
-              >
-                {chartData.map((entry, index) => (
-                  <motion.rect
-                    key={`latte-${index}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
-                  />
-                ))}
-              </Bar>
+              />
               <Bar
-                dataKey="tea"
-                fill="url(#teaGradient)"
+                dataKey="Tea"
+                fill="hsl(var(--chart-3))"
                 radius={[4, 4, 0, 0]}
-                onMouseEnter={() => setHoveredBar("tea")}
+                onMouseEnter={() => setHoveredBar("Tea")}
                 onMouseLeave={() => setHoveredBar(null)}
-              >
-                {chartData.map((entry, index) => (
-                  <motion.rect
-                    key={`tea-${index}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 + 0.4 }}
-                  />
-                ))}
-              </Bar>
-              <defs>
-                <linearGradient
-                  id="espressoGradient"
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
-                  <stop
-                    offset="5%"
-                    stopColor="hsl(var(--chart-1))"
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="hsl(var(--chart-1))"
-                    stopOpacity={0.2}
-                  />
-                </linearGradient>
-                <linearGradient id="latteGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="hsl(var(--chart-2))"
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="hsl(var(--chart-2))"
-                    stopOpacity={0.2}
-                  />
-                </linearGradient>
-                <linearGradient id="teaGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="hsl(var(--chart-3))"
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="hsl(var(--chart-3))"
-                    stopOpacity={0.2}
-                  />
-                </linearGradient>
-              </defs>
+              />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="bg-muted">
-        <div className="flex w-full items-start gap-4 text-sm">
+      <CardFooter>
+        <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs sm:text-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+            <motion.div
+              className="flex items-center gap-2 font-medium"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Overall consumption up 7.8%{" "}
+              <TrendingUp className="h-4 w-4 sm:h-4 sm:w-4" />
+            </motion.div>
+            <motion.div
+              className="text-muted-foreground"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              January - June 2024
+            </motion.div>
+          </div>
           <motion.div
-            className="grid gap-2"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="flex items-center gap-2 font-medium leading-none">
-              <TrendingUp className="h-5 w-5 text-[hsl(var(--chart-1))]" />
-              <span>Overall consumption up 7.8% this month</span>
-            </div>
-          </motion.div>
-          <motion.div
-            className="grid gap-2"
+            className="flex flex-wrap items-center gap-2 sm:gap-4"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              <Coffee
-                className={`h-5 w-5 ${
-                  hoveredBar === "espresso" ? "text-[hsl(var(--chart-1))]" : ""
-                }`}
-              />
-              <span>Espresso</span>
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              <Coffee
-                className={`h-5 w-5 ${
-                  hoveredBar === "latte" ? "text-[hsl(var(--chart-2))]" : ""
-                }`}
-              />
-              <span>Latte</span>
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              <Leaf
-                className={`h-5 w-5 ${
-                  hoveredBar === "tea" ? "text-[hsl(var(--chart-3))]" : ""
-                }`}
-              />
-              <span>Tea</span>
-            </div>
+            {["Espresso", "Latte", "Tea"].map((item, index) => (
+              <div
+                key={item}
+                className="flex items-center gap-1 text-muted-foreground"
+              >
+                {item === "Tea" ? (
+                  <Leaf
+                    className={`h-3 w-3 sm:h-4 sm:w-4 ${
+                      hoveredBar === item
+                        ? `text-[hsl(var(--chart-${index + 1}))]`
+                        : ""
+                    }`}
+                  />
+                ) : (
+                  <Coffee
+                    className={`h-3 w-3 sm:h-4 sm:w-4 ${
+                      hoveredBar === item
+                        ? `text-[hsl(var(--chart-${index + 1}))]`
+                        : ""
+                    }`}
+                  />
+                )}
+                <span>{item}</span>
+              </div>
+            ))}
           </motion.div>
         </div>
       </CardFooter>

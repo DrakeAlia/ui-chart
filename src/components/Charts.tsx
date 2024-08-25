@@ -1,7 +1,6 @@
 "use client";
 
 import { Bar, BarChart, CartesianGrid, LineChart, XAxis } from "recharts";
-import { useTheme } from "next-themes";
 
 import {
   Card,
