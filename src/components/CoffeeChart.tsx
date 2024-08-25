@@ -57,6 +57,10 @@ const chartConfig = {
 export function CoffeeChart() {
   const [hoveredBar, setHoveredBar] = useState<string | null>(null);
 
+  if (!chartData || chartData.length === 0) {
+    return <div>No data available</div>;
+  }
+
   const CustomTooltip: React.FC<{
     active?: boolean;
     payload?: Array<{
@@ -95,75 +99,81 @@ export function CoffeeChart() {
           transition={{ duration: 0.5 }}
           className="grid flex-1 gap-1 text-center sm:text-left"
         >
-          <CardTitle className="text-2xl font-bold">
+          <CardTitle className="text-3xl font-bold">
             Global Beverage Trends
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-muted-foreground">
             Espresso, Latte, and Tea Consumption (Past 6 Months)
           </CardDescription>
         </motion.div>
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+      <CardContent className="px-4 pt-6 sm:px-6 sm:pt-8">
+        <ChartContainer config={chartConfig} className="min-h-[350px] w-full">
+          <ResponsiveContainer width="100%" height={350} minHeight={300}>
+            <BarChart
+              data={chartData}
+              margin={{ top: 20, bottom: 20, left: 10, right: 10 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="hsl(var(--border))"
+              />
               <XAxis
                 dataKey="month"
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(value) => value.slice(0, 3)}
+                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
               />
-              <YAxis tickLine={false} axisLine={false} />
-              <Tooltip content={<CustomTooltip />} />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                width={50}
+              />
+              <Tooltip
+                content={<CustomTooltip />}
+                cursor={{ fill: "hsl(var(--muted))" }}
+              />
               <ChartLegend content={<ChartLegendContent />} />
-              <Bar
-                dataKey="Espresso"
-                fill="hsl(var(--chart-1))"
-                radius={[4, 4, 0, 0]}
-                onMouseEnter={() => setHoveredBar("Espresso")}
-                onMouseLeave={() => setHoveredBar(null)}
-                animationDuration={1000}
-                animationBegin={0}
-              />
-              <Bar
-                dataKey="Latte"
-                fill="hsl(var(--chart-2))"
-                radius={[4, 4, 0, 0]}
-                onMouseEnter={() => setHoveredBar("Latte")}
-                onMouseLeave={() => setHoveredBar(null)}
-                animationDuration={1000}
-                animationBegin={300}
-              />
-              <Bar
-                dataKey="Tea"
-                fill="hsl(var(--chart-3))"
-                radius={[4, 4, 0, 0]}
-                onMouseEnter={() => setHoveredBar("Tea")}
-                onMouseLeave={() => setHoveredBar(null)}
-                animationDuration={1000}
-                animationBegin={600}
-              />
+              {["Espresso", "Latte", "Tea"].map((item, index) => (
+                <Bar
+                  key={item}
+                  dataKey={item}
+                  fill={`hsl(var(--chart-${index + 1}))`}
+                  radius={[4, 4, 0, 0]}
+                  onMouseEnter={() => setHoveredBar(item)}
+                  onMouseLeave={() => setHoveredBar(null)}
+                  animationDuration={1000}
+                  animationBegin={index * 200}
+                  aria-label={`${item} consumption data`}
+                />
+              ))}
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs sm:text-sm">
+      <CardFooter className="bg-muted/20 border-t border-border/10 py-4">
+        <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs sm:text-sm">
           <motion.div
-            className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4"
+            className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="flex items-center gap-2 font-medium">
+            <motion.div
+              animate={{ scale: [1, 1.03, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="flex items-center gap-1 font-medium"
+            >
               Overall consumption up 7.8%{" "}
               <TrendingUp className="h-4 w-4 sm:h-4 sm:w-4" />
-            </div>
+            </motion.div>
             <div className="text-muted-foreground">January - June 2024</div>
           </motion.div>
           <motion.div
-            className="flex flex-wrap items-center gap-2 sm:gap-4"
+            className="flex flex-wrap items-center gap-3 sm:gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
