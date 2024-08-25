@@ -9,9 +9,9 @@ export default function Home() {
       <div className="mb-8">
         <CoffeeChart />
       </div>
-      <div>
+      {/* <div>
         <Charts />
-      </div>
+      </div> */}
       {/* <div>
         <ChartArea />
       </div> *}

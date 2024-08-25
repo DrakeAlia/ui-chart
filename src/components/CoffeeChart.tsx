@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/chart";
 
 import { TrendingUp, Coffee, Leaf } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const chartData = [
   { month: "January", Espresso: 186, Latte: 80, Tea: 120 },
@@ -56,6 +56,7 @@ const chartConfig = {
 
 export function CoffeeChart() {
   const [hoveredBar, setHoveredBar] = useState<string | null>(null);
+
   const CustomTooltip: React.FC<{
     active?: boolean;
     payload?: Array<{
@@ -63,19 +64,23 @@ export function CoffeeChart() {
       value: number;
       color: string;
     }>;
-
     label?: string;
   }> = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-background border border-border p-4 rounded-lg shadow-lg">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          className="bg-background border border-border p-4 rounded-lg shadow-lg"
+        >
           <p className="font-bold mb-2">{label}</p>
           {payload.map((entry, index) => (
             <p key={index} style={{ color: entry.color }}>
               {entry.name}: {entry.value} cups
             </p>
           ))}
-        </div>
+        </motion.div>
       );
     }
     return null;
@@ -84,14 +89,19 @@ export function CoffeeChart() {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row bg-background text-foreground">
-        <div className="grid flex-1 gap-1 text-center sm:text-left">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="grid flex-1 gap-1 text-center sm:text-left"
+        >
           <CardTitle className="text-2xl font-bold">
             Global Beverage Trends
           </CardTitle>
           <CardDescription>
             Espresso, Latte, and Tea Consumption (Past 6 Months)
           </CardDescription>
-        </div>
+        </motion.div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
@@ -113,6 +123,8 @@ export function CoffeeChart() {
                 radius={[4, 4, 0, 0]}
                 onMouseEnter={() => setHoveredBar("Espresso")}
                 onMouseLeave={() => setHoveredBar(null)}
+                animationDuration={1000}
+                animationBegin={0}
               />
               <Bar
                 dataKey="Latte"
@@ -120,6 +132,8 @@ export function CoffeeChart() {
                 radius={[4, 4, 0, 0]}
                 onMouseEnter={() => setHoveredBar("Latte")}
                 onMouseLeave={() => setHoveredBar(null)}
+                animationDuration={1000}
+                animationBegin={300}
               />
               <Bar
                 dataKey="Tea"
@@ -127,6 +141,8 @@ export function CoffeeChart() {
                 radius={[4, 4, 0, 0]}
                 onMouseEnter={() => setHoveredBar("Tea")}
                 onMouseLeave={() => setHoveredBar(null)}
+                animationDuration={1000}
+                animationBegin={600}
               />
             </BarChart>
           </ResponsiveContainer>
@@ -134,55 +150,58 @@ export function CoffeeChart() {
       </CardContent>
       <CardFooter>
         <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs sm:text-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-            <motion.div
-              className="flex items-center gap-2 font-medium"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              Overall consumption up 7.8%{" "}
-              <TrendingUp className="h-4 w-4 sm:h-4 sm:w-4" />
-            </motion.div>
-            <motion.div
-              className="text-muted-foreground"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              January - June 2024
-            </motion.div>
-          </div>
           <motion.div
-            className="flex flex-wrap items-center gap-2 sm:gap-4"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
+            <div className="flex items-center gap-2 font-medium">
+              Overall consumption up 7.8%{" "}
+              <TrendingUp className="h-4 w-4 sm:h-4 sm:w-4" />
+            </div>
+            <div className="text-muted-foreground">January - June 2024</div>
+          </motion.div>
+          <motion.div
+            className="flex flex-wrap items-center gap-2 sm:gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
             {["Espresso", "Latte", "Tea"].map((item, index) => (
-              <div
+              <motion.div
                 key={item}
-                className="flex items-center gap-1 text-muted-foreground"
+                className="flex items-center gap-1"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                {item === "Tea" ? (
-                  <Leaf
-                    className={`h-3 w-3 sm:h-4 sm:w-4 ${
+                <motion.div
+                  animate={{
+                    color:
                       hoveredBar === item
-                        ? `text-[hsl(var(--chart-${index + 1}))]`
-                        : ""
-                    }`}
-                  />
-                ) : (
-                  <Coffee
-                    className={`h-3 w-3 sm:h-4 sm:w-4 ${
+                        ? `hsl(var(--chart-${index + 1}))`
+                        : "hsl(var(--muted-foreground))",
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {item === "Tea" ? (
+                    <Leaf className="h-3 w-3 sm:h-4 sm:w-4" />
+                  ) : (
+                    <Coffee className="h-3 w-3 sm:h-4 sm:w-4" />
+                  )}
+                </motion.div>
+                <motion.span
+                  animate={{
+                    color:
                       hoveredBar === item
-                        ? `text-[hsl(var(--chart-${index + 1}))]`
-                        : ""
-                    }`}
-                  />
-                )}
-                <span>{item}</span>
-              </div>
+                        ? `hsl(var(--chart-${index + 1}))`
+                        : "hsl(var(--muted-foreground))",
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {item}
+                </motion.span>
+              </motion.div>
             ))}
           </motion.div>
         </div>
