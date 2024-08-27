@@ -76,12 +76,21 @@ export function CoffeeChart() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
-          className="bg-background border border-border p-4 rounded-lg shadow-lg"
+          className="bg-background/90 backdrop-blur-sm border border-border p-4 rounded-lg shadow-lg"
         >
-          <p className="font-bold mb-2">{label}</p>
+          <p className="font-bold mb-2 text-lg">{label}</p>
           {payload.map((entry, index) => (
-            <p key={index} style={{ color: entry.color }}>
-              {entry.name}: {entry.value} cups
+            <p
+              key={index}
+              className="flex items-center gap-2"
+              style={{ color: entry.color }}
+            >
+              <span
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: entry.color }}
+              ></span>
+              <span className="font-medium">{entry.name}:</span> {entry.value}{" "}
+              cups
             </p>
           ))}
         </motion.div>
@@ -99,60 +108,66 @@ export function CoffeeChart() {
           transition={{ duration: 0.5 }}
           className="grid flex-1 gap-1 text-center sm:text-left"
         >
-          <CardTitle className="text-3xl font-bold">
+          <CardTitle className="text-2xl sm:text-3xl font-bold">
             Global Beverage Trends
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardDescription className="text-sm sm:text-base text-muted-foreground">
             Espresso, Latte, and Tea Consumption (Past 6 Months)
           </CardDescription>
         </motion.div>
       </CardHeader>
       <CardContent className="px-4 pt-6 sm:px-6 sm:pt-8">
-        <ChartContainer config={chartConfig} className="min-h-[350px] w-full">
-          <ResponsiveContainer width="100%" height={350} minHeight={300}>
-            <BarChart
-              data={chartData}
-              margin={{ top: 20, bottom: 20, left: 10, right: 10 }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="hsl(var(--border))"
-              />
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value) => value.slice(0, 3)}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                width={50}
-              />
-              <Tooltip
-                content={<CustomTooltip />}
-                cursor={{ fill: "hsl(var(--muted))" }}
-              />
-              <ChartLegend content={<ChartLegendContent />} />
-              {["Espresso", "Latte", "Tea"].map((item, index) => (
-                <Bar
-                  key={item}
-                  dataKey={item}
-                  fill={`hsl(var(--chart-${index + 1}))`}
-                  radius={[4, 4, 0, 0]}
-                  onMouseEnter={() => setHoveredBar(item)}
-                  onMouseLeave={() => setHoveredBar(null)}
-                  animationDuration={1000}
-                  animationBegin={index * 200}
-                  aria-label={`${item} consumption data`}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <ChartContainer config={chartConfig} className="min-h-[350px] w-full">
+            <ResponsiveContainer width="100%" height={350} minHeight={300}>
+              <BarChart
+                data={chartData}
+                margin={{ top: 20, bottom: 20, left: 10, right: 10 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="hsl(var(--border))"
                 />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartContainer>
+                <XAxis
+                  dataKey="month"
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(value) => value.slice(0, 3)}
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                  width={50}
+                />
+                <Tooltip
+                  content={<CustomTooltip />}
+                  cursor={{ fill: "hsl(var(--muted))" }}
+                />
+                <ChartLegend content={<ChartLegendContent />} />
+                {["Espresso", "Latte", "Tea"].map((item, index) => (
+                  <Bar
+                    key={item}
+                    dataKey={item}
+                    fill={`hsl(var(--chart-${index + 1}))`}
+                    radius={[4, 4, 0, 0]}
+                    onMouseEnter={() => setHoveredBar(item)}
+                    onMouseLeave={() => setHoveredBar(null)}
+                    animationDuration={1000}
+                    animationBegin={index * 200}
+                    aria-label={`${item} consumption data`}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </motion.div>
       </CardContent>
       <CardFooter className="bg-muted/20 border-t border-border/10 py-4">
         <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs sm:text-sm">
