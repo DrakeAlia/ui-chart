@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -27,7 +27,7 @@ import {
   ChartLegendContent,
 } from "@/components/ui/chart";
 
-import { TrendingUp, Coffee, Leaf } from "lucide-react";
+import { TrendingUp, Coffee, Leaf, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const chartData = [
@@ -56,7 +56,23 @@ const chartConfig = {
 
 export function CoffeeChart() {
   const [hoveredBar, setHoveredBar] = useState<string | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [totalConsumption, setTotalConsumption] = useState<number>(0);
   const memoizedChartData = useMemo(() => chartData, []);
+
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
+  };
+
+  useEffect(() => {
+    const total = memoizedChartData.reduce(
+      (acc, month) => acc + month.Espresso + month.Latte + month.Tea,
+      0
+    );
+    setTotalConsumption(total);
+  }, [memoizedChartData]);
 
   const CustomTooltip = useCallback(
     ({
@@ -105,26 +121,52 @@ export function CoffeeChart() {
     []
   );
 
-  const renderBar = useCallback((props: any) => {
-    const { fill, x, y, width, height } = props;
+  const renderBar = useCallback(
+    (props: any) => {
+      const { fill, x, y, width, height, payload } = props;
+      const isHovered = hoveredBar === payload.dataKey;
+      const isSelected = selectedMonth === payload.month;
 
-    return (
-      <motion.rect
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-        fill={fill}
-        initial={{ scaleY: 0, originY: 1 }}
-        animate={{ scaleY: 1 }}
-        transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
-        whileHover={{
-          scale: 1.05,
-          transition: { duration: 0.2 },
-        }}
-      />
-    );
-  }, []);
+      return (
+        <motion.rect
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          fill={fill}
+          initial={{ scaleY: 0, originY: 1 }}
+          animate={{
+            scaleY: 1,
+            fill: isSelected
+              ? `url(#gradient-${payload.dataKey}-selected)`
+              : isHovered
+              ? `url(#gradient-${payload.dataKey}-hover)`
+              : fill,
+            filter: isSelected ? "brightness(1.2) saturate(1.2)" : "none",
+          }}
+          transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
+          whileHover={{
+            scale: 1.05,
+            transition: { duration: 0.2 },
+          }}
+        />
+      );
+    },
+    [hoveredBar, selectedMonth]
+  );
+
+  const handleKeyPress = useCallback(
+    (event: React.KeyboardEvent, month: string) => {
+      if (event.key === "Enter" || event.key === " ") {
+        setSelectedMonth(month);
+      }
+    },
+    []
+  );
+
+  const handleReset = () => {
+    setSelectedMonth(null);
+  };
 
   if (!memoizedChartData || memoizedChartData.length === 0) {
     return (
@@ -143,7 +185,7 @@ export function CoffeeChart() {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
         <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row bg-background text-foreground">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -176,6 +218,12 @@ export function CoffeeChart() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.8 }}
+            onMouseMove={handleMouseMove}
+            style={{
+              transform: `translate(${mousePosition.x * 0.01}px, ${
+                mousePosition.y * 0.01
+              }px)`,
+            }}
           >
             <ChartContainer
               config={chartConfig}
@@ -185,11 +233,13 @@ export function CoffeeChart() {
                 <BarChart
                   data={memoizedChartData}
                   margin={{ top: 20, bottom: 20, left: 10, right: 10 }}
+                  onClick={(data) => setSelectedMonth(data.activeLabel ?? null)}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
                     vertical={false}
                     stroke="hsl(var(--border))"
+                    className="animate-fade-in"
                   />
                   <XAxis
                     dataKey="month"
@@ -215,16 +265,18 @@ export function CoffeeChart() {
                     cursor={{ fill: "hsl(var(--muted))" }}
                   />
                   <ChartLegend content={<ChartLegendContent />} />
-                  {["Espresso", "Latte", "Tea"].map((item, index) => (
+                  {["Espresso", "Latte", "Tea"].map((item) => (
                     <Bar
                       key={item}
                       dataKey={item}
-                      fill={`hsl(var(--chart-${index + 1}))`}
+                      fill={chartConfig[item as keyof typeof chartConfig].color}
                       radius={[4, 4, 0, 0]}
                       onMouseEnter={() => setHoveredBar(item)}
                       onMouseLeave={() => setHoveredBar(null)}
                       shape={renderBar}
                       aria-label={`${item} consumption data`}
+                      tabIndex={0}
+                      onKeyPress={(e) => handleKeyPress(e, item)}
                     />
                   ))}
                 </BarChart>
@@ -232,20 +284,23 @@ export function CoffeeChart() {
             </ChartContainer>
           </motion.div>
         </CardContent>
-        <CardFooter className="bg-muted/20 border-t border-border/10 py-4">
-          <div className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs sm:text-sm">
+        <CardFooter className="bg-muted/20 border-t border-border/10 py-4 flex flex-col gap-4">
+          <motion.div
+            className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs sm:text-sm"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1 }}
+          >
             <motion.div
               className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1 }}
+              whileHover={{ scale: 1.05 }}
             >
               <motion.div
                 animate={{ scale: [1, 1.03, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
                 className="flex items-center gap-1 font-medium"
               >
-                Overall consumption up 7.8%{" "}
+                Overall consumption: {totalConsumption} cups
                 <TrendingUp
                   className="h-4 w-4 sm:h-4 sm:w-4"
                   aria-hidden="true"
@@ -255,15 +310,15 @@ export function CoffeeChart() {
             </motion.div>
             <motion.div
               className="flex flex-wrap items-center gap-3 sm:gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 1.2 }}
             >
               {["Espresso", "Latte", "Tea"].map((item, index) => (
                 <motion.div
                   key={item}
                   className="flex items-center gap-1"
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.1, rotate: 5 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -273,7 +328,7 @@ export function CoffeeChart() {
                     animate={{
                       color:
                         hoveredBar === item
-                          ? `hsl(var(--chart-${index + 1}))`
+                          ? chartConfig[item as keyof typeof chartConfig].color
                           : "hsl(var(--muted-foreground))",
                     }}
                     transition={{ duration: 0.3 }}
@@ -288,7 +343,7 @@ export function CoffeeChart() {
                     animate={{
                       color:
                         hoveredBar === item
-                          ? `hsl(var(--chart-${index + 1}))`
+                          ? chartConfig[item as keyof typeof chartConfig].color
                           : "hsl(var(--muted-foreground))",
                     }}
                     transition={{ duration: 0.3 }}
@@ -299,7 +354,27 @@ export function CoffeeChart() {
                 </motion.div>
               ))}
             </motion.div>
-          </div>
+          </motion.div>
+          <AnimatePresence>
+            {selectedMonth && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="flex items-center justify-center gap-2"
+              >
+                <span className="font-medium">Selected: {selectedMonth}</span>
+                <motion.button
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleReset}
+                  className="flex items-center gap-1 px-2 py-1 bg-muted rounded-md text-sm font-medium"
+                >
+                  Reset <X className="h-3 w-3" />
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </CardFooter>
       </Card>
     </motion.div>
