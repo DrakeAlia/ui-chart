@@ -27,7 +27,7 @@ import {
   ChartLegendContent,
 } from "@/components/ui/chart";
 
-import { TrendingUp, Coffee, Leaf, X } from "lucide-react";
+import { TrendingUp, Coffee, Leaf, X, Droplet } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const chartData = [
@@ -42,15 +42,18 @@ const chartData = [
 const chartConfig = {
   Espresso: {
     label: "Espresso",
-    color: "hsl(var(--chart-1))",
+    // color: "hsl(var(--chart-1))",
+    color: "hsl(25, 70%, 45%)", // A rich brown color
   },
   Latte: {
     label: "Latte",
-    color: "hsl(var(--chart-2))",
+    // color: "hsl(var(--chart-2))",
+    color: "hsl(43, 80%, 70%)", // A creamy light brown
   },
   Tea: {
     label: "Tea",
-    color: "hsl(var(--chart-3))",
+    // color: "hsl(var(--chart-3))",
+    color: "hsl(150, 50%, 45%)", // A refreshing green
   },
 } satisfies ChartConfig;
 
@@ -123,33 +126,54 @@ export function CoffeeChart() {
 
   const renderBar = useCallback(
     (props: any) => {
-      const { fill, x, y, width, height, payload } = props;
-      const isHovered = hoveredBar === payload.dataKey;
+      const { fill, x, y, width, height, payload, dataKey } = props;
+      const isHovered = hoveredBar === dataKey;
       const isSelected = selectedMonth === payload.month;
+      const barColor = chartConfig[dataKey as keyof typeof chartConfig].color;
 
       return (
-        <motion.rect
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-          fill={fill}
-          initial={{ scaleY: 0, originY: 1 }}
-          animate={{
-            scaleY: 1,
-            fill: isSelected
-              ? `url(#gradient-${payload.dataKey}-selected)`
-              : isHovered
-              ? `url(#gradient-${payload.dataKey}-hover)`
-              : fill,
-            filter: isSelected ? "brightness(1.2) saturate(1.2)" : "none",
-          }}
-          transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
-          whileHover={{
-            scale: 1.05,
-            transition: { duration: 0.2 },
-          }}
-        />
+        <motion.g>
+          <defs>
+            <linearGradient
+              id={`gradient-${dataKey}`}
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="1"
+            >
+              <stop offset="0%" stopColor={barColor} stopOpacity={0.8} />
+              <stop offset="100%" stopColor={barColor} stopOpacity={0.3} />
+            </linearGradient>
+          </defs>
+          <motion.rect
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+            fill={`url(#gradient-${dataKey})`}
+            initial={{ scaleY: 0, originY: 1 }}
+            animate={{
+              scaleY: 1,
+              filter: isSelected ? "brightness(1.2) saturate(1.2)" : "none",
+            }}
+            transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
+            whileHover={{
+              scale: 1.05,
+              transition: { duration: 0.2 },
+            }}
+          />
+          {isHovered && (
+            <motion.circle
+              cx={x + width / 2}
+              cy={y - 10}
+              r={5}
+              fill={barColor}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.2 }}
+            />
+          )}
+        </motion.g>
       );
     },
     [hoveredBar, selectedMonth]
@@ -184,14 +208,26 @@ export function CoffeeChart() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
+      className="relative"
     >
-      <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
-        <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row bg-background text-foreground">
+      <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-background to-background/80 backdrop-blur-sm">
+        <CardHeader className="flex items-center gap-4 space-y-0 border-b py-5 sm:flex-row bg-background/50 text-foreground">
+          <motion.div
+            className="text-6xl"
+            initial={{ opacity: 0, rotate: 0 }}
+            animate={{ opacity: 1, rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            style={{
+              color: "hsl(var(--primary))",
+            }}
+          >
+            <Coffee />
+          </motion.div>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="grid flex-1 gap-1 text-center sm:text-left"
+            className="grid flex-1 gap-1"
           >
             <motion.div
               initial={{ opacity: 0, y: -20 }}
