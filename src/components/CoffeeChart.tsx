@@ -210,209 +210,220 @@ export function CoffeeChart() {
       transition={{ duration: 0.5 }}
       className="relative"
     >
-      <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-background to-background/80 backdrop-blur-sm">
-        <CardHeader className="flex items-center gap-4 space-y-0 border-b py-5 sm:flex-row bg-background/50 text-foreground">
-          <motion.div
-            className="text-6xl"
-            initial={{ opacity: 0, rotate: 0 }}
-            animate={{ opacity: 1, rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            style={{
-              color: "hsl(var(--primary))",
-            }}
-          >
-            <Coffee />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="grid flex-1 gap-1"
-          >
+      <motion.div
+        whileHover={{ y: -5, boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}
+        transition={{ duration: 0.3 }}
+      >
+        <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-background to-background/80 backdrop-blur-sm">
+          <CardHeader className="flex items-center gap-4 space-y-0 border-b py-5 sm:flex-row bg-background/50 text-foreground">
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              className="text-6xl"
+              initial={{ opacity: 0, rotate: 0 }}
+              animate={{ opacity: 1, rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              style={{
+                color: "hsl(var(--primary))",
+              }}
             >
-              <CardTitle className="text-2xl sm:text-3xl font-bold">
-                Global Beverage Trends
-              </CardTitle>
+              <Coffee />
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-            >
-              <CardDescription className="text-sm sm:text-base text-muted-foreground">
-                Espresso, Latte, and Tea Consumption (Past 6 Months)
-              </CardDescription>
-            </motion.div>
-          </motion.div>
-        </CardHeader>
-        <CardContent className="px-4 pt-6 sm:px-6 sm:pt-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-            onMouseMove={handleMouseMove}
-            style={{
-              transform: `translate(${mousePosition.x * 0.01}px, ${
-                mousePosition.y * 0.01
-              }px)`,
-            }}
-          >
-            <ChartContainer
-              config={chartConfig}
-              className="min-h-[350px] w-full"
-            >
-              <ResponsiveContainer width="100%" height={350} minHeight={300}>
-                <BarChart
-                  data={memoizedChartData}
-                  margin={{ top: 20, bottom: 20, left: 10, right: 10 }}
-                  onClick={(data) => setSelectedMonth(data.activeLabel ?? null)}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="hsl(var(--border))"
-                    className="animate-fade-in"
-                  />
-                  <XAxis
-                    dataKey="month"
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(value) => value.slice(0, 3)}
-                    tick={{
-                      fill: "hsl(var(--muted-foreground))",
-                      fontSize: 12,
-                    }}
-                  />
-                  <YAxis
-                    tickLine={false}
-                    axisLine={false}
-                    tick={{
-                      fill: "hsl(var(--muted-foreground))",
-                      fontSize: 12,
-                    }}
-                    width={50}
-                  />
-                  <Tooltip
-                    content={<CustomTooltip />}
-                    cursor={{ fill: "hsl(var(--muted))" }}
-                  />
-                  <ChartLegend content={<ChartLegendContent />} />
-                  {["Espresso", "Latte", "Tea"].map((item) => (
-                    <Bar
-                      key={item}
-                      dataKey={item}
-                      fill={chartConfig[item as keyof typeof chartConfig].color}
-                      radius={[4, 4, 0, 0]}
-                      onMouseEnter={() => setHoveredBar(item)}
-                      onMouseLeave={() => setHoveredBar(null)}
-                      shape={renderBar}
-                      aria-label={`${item} consumption data`}
-                      tabIndex={0}
-                      onKeyPress={(e) => handleKeyPress(e, item)}
-                    />
-                  ))}
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </motion.div>
-        </CardContent>
-        <CardFooter className="bg-muted/20 border-t border-border/10 py-4 flex flex-col gap-4">
-          <motion.div
-            className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs sm:text-sm"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1 }}
-          >
-            <motion.div
-              className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
-              whileHover={{ scale: 1.05 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="grid flex-1 gap-1"
             >
               <motion.div
-                animate={{ scale: [1, 1.03, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="flex items-center gap-1 font-medium"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
               >
-                Overall consumption: {totalConsumption} cups
-                <TrendingUp
-                  className="h-4 w-4 sm:h-4 sm:w-4"
-                  aria-hidden="true"
-                />
+                <CardTitle className="text-2xl sm:text-3xl font-bold">
+                  Global Beverage Trends
+                </CardTitle>
               </motion.div>
-              <div className="text-muted-foreground">January - June 2024</div>
-            </motion.div>
-            <motion.div
-              className="flex flex-wrap items-center gap-3 sm:gap-4"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 1.2 }}
-            >
-              {["Espresso", "Latte", "Tea"].map((item, index) => (
-                <motion.div
-                  key={item}
-                  className="flex items-center gap-1"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 1.2 + index * 0.1 }}
-                >
-                  <motion.div
-                    animate={{
-                      color:
-                        hoveredBar === item
-                          ? chartConfig[item as keyof typeof chartConfig].color
-                          : "hsl(var(--muted-foreground))",
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {item === "Tea" ? (
-                      <Leaf className="h-3 w-3 sm:h-4 sm:w-4" />
-                    ) : (
-                      <Coffee className="h-3 w-3 sm:h-4 sm:w-4" />
-                    )}
-                  </motion.div>
-                  <motion.span
-                    animate={{
-                      color:
-                        hoveredBar === item
-                          ? chartConfig[item as keyof typeof chartConfig].color
-                          : "hsl(var(--muted-foreground))",
-                    }}
-                    transition={{ duration: 0.3 }}
-                    aria-label={`${item} indicator`}
-                  >
-                    {item}
-                  </motion.span>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
-          <AnimatePresence>
-            {selectedMonth && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="flex items-center justify-center gap-2"
+                transition={{ duration: 0.5, delay: 0.6 }}
               >
-                <span className="font-medium">Selected: {selectedMonth}</span>
-                <motion.button
-                  whileHover={{ scale: 1.05, rotate: 5 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleReset}
-                  className="flex items-center gap-1 px-2 py-1 bg-muted rounded-md text-sm font-medium"
-                >
-                  Reset <X className="h-3 w-3" />
-                </motion.button>
+                <CardDescription className="text-sm sm:text-base text-muted-foreground">
+                  Espresso, Latte, and Tea Consumption (Past 6 Months)
+                </CardDescription>
               </motion.div>
-            )}
-          </AnimatePresence>
-        </CardFooter>
-      </Card>
+            </motion.div>
+          </CardHeader>
+          <CardContent className="px-4 pt-6 sm:px-6 sm:pt-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              onMouseMove={handleMouseMove}
+              style={{
+                transform: `translate(${mousePosition.x * 0.01}px, ${
+                  mousePosition.y * 0.01
+                }px)`,
+              }}
+            >
+              <ChartContainer
+                config={chartConfig}
+                className="min-h-[350px] w-full"
+              >
+                <ResponsiveContainer width="100%" height={350} minHeight={300}>
+                  <BarChart
+                    data={memoizedChartData}
+                    margin={{ top: 20, bottom: 20, left: 10, right: 10 }}
+                    onClick={(data) =>
+                      setSelectedMonth(data.activeLabel ?? null)
+                    }
+                  >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke="hsl(var(--border))"
+                      className="animate-fade-in"
+                    />
+                    <XAxis
+                      dataKey="month"
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(value) => value.slice(0, 3)}
+                      tick={{
+                        fill: "hsl(var(--muted-foreground))",
+                        fontSize: 12,
+                      }}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{
+                        fill: "hsl(var(--muted-foreground))",
+                        fontSize: 12,
+                      }}
+                      width={50}
+                    />
+                    <Tooltip
+                      content={<CustomTooltip />}
+                      cursor={{ fill: "hsl(var(--muted))" }}
+                    />
+                    <ChartLegend content={<ChartLegendContent />} />
+                    {["Espresso", "Latte", "Tea"].map((item) => (
+                      <Bar
+                        key={item}
+                        dataKey={item}
+                        fill={
+                          chartConfig[item as keyof typeof chartConfig].color
+                        }
+                        radius={[4, 4, 0, 0]}
+                        onMouseEnter={() => setHoveredBar(item)}
+                        onMouseLeave={() => setHoveredBar(null)}
+                        shape={renderBar}
+                        aria-label={`${item} consumption data`}
+                        tabIndex={0}
+                        onKeyPress={(e) => handleKeyPress(e, item)}
+                      />
+                    ))}
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </motion.div>
+          </CardContent>
+          <CardFooter className="bg-muted/20 border-t border-border/10 py-4 flex flex-col gap-4">
+            <motion.div
+              className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs sm:text-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 1 }}
+            >
+              <motion.div
+                className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
+                whileHover={{ scale: 1.05 }}
+              >
+                <motion.div
+                  animate={{ scale: [1, 1.03, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="flex items-center gap-1 font-medium"
+                >
+                  Overall consumption: {totalConsumption} cups
+                  <TrendingUp
+                    className="h-4 w-4 sm:h-4 sm:w-4"
+                    aria-hidden="true"
+                  />
+                </motion.div>
+                <div className="text-muted-foreground">January - June 2024</div>
+              </motion.div>
+              <motion.div
+                className="flex flex-wrap items-center gap-3 sm:gap-4"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 1.2 }}
+              >
+                {["Espresso", "Latte", "Tea"].map((item, index) => (
+                  <motion.div
+                    key={item}
+                    className="flex items-center gap-1"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 1.2 + index * 0.1 }}
+                  >
+                    <motion.div
+                      animate={{
+                        color:
+                          hoveredBar === item
+                            ? chartConfig[item as keyof typeof chartConfig]
+                                .color
+                            : "hsl(var(--muted-foreground))",
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {item === "Tea" ? (
+                        <Leaf className="h-3 w-3 sm:h-4 sm:w-4" />
+                      ) : (
+                        <Coffee className="h-3 w-3 sm:h-4 sm:w-4" />
+                      )}
+                    </motion.div>
+                    <motion.span
+                      animate={{
+                        color:
+                          hoveredBar === item
+                            ? chartConfig[item as keyof typeof chartConfig]
+                                .color
+                            : "hsl(var(--muted-foreground))",
+                      }}
+                      transition={{ duration: 0.3 }}
+                      aria-label={`${item} indicator`}
+                    >
+                      {item}
+                    </motion.span>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+            <AnimatePresence>
+              {selectedMonth && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="flex items-center justify-center gap-2"
+                >
+                  <span className="font-medium">Selected: {selectedMonth}</span>
+                  <motion.button
+                    whileHover={{ scale: 1.05, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleReset}
+                    className="flex items-center gap-1 px-2 py-1 bg-muted rounded-md text-sm font-medium"
+                  >
+                    Reset <X className="h-3 w-3" />
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </CardFooter>
+        </Card>
+      </motion.div>
     </motion.div>
   );
 }
