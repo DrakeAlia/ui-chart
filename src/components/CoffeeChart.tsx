@@ -208,16 +208,16 @@ export function CoffeeChart() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
-      className="relative"
+      className="relative w-full"
     >
       <motion.div
         whileHover={{ y: -5, boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}
         transition={{ duration: 0.3 }}
       >
         <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-background to-background/80 backdrop-blur-sm">
-          <CardHeader className="flex items-center gap-4 space-y-0 border-b py-5 sm:flex-row bg-background/50 text-foreground">
+          <CardHeader className="flex flex-col sm:flex-row items-center gap-2 space-y-2 sm:space-y-0 border-b py-3 sm:py-5 bg-background/50 text-foreground">
             <motion.div
-              className="text-6xl"
+              className="text-4xl sm:text-6xl"
               initial={{ opacity: 0, rotate: 0 }}
               animate={{ opacity: 1, rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -231,14 +231,14 @@ export function CoffeeChart() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="grid flex-1 gap-1"
+              className="grid flex-1 gap-1 text-center sm:text-left"
             >
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                <CardTitle className="text-2xl sm:text-3xl font-bold">
+                <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold">
                   Global Beverage Trends
                 </CardTitle>
               </motion.div>
@@ -247,13 +247,13 @@ export function CoffeeChart() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
-                <CardDescription className="text-sm sm:text-base text-muted-foreground">
+                <CardDescription className="text-xs sm:text-sm md:text-base text-muted-foreground">
                   Espresso, Latte, and Tea Consumption (Past 6 Months)
                 </CardDescription>
               </motion.div>
             </motion.div>
           </CardHeader>
-          <CardContent className="px-4 pt-6 sm:px-6 sm:pt-8">
+          <CardContent className="px-2 sm:px-4 pt-4 sm:pt-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -267,12 +267,12 @@ export function CoffeeChart() {
             >
               <ChartContainer
                 config={chartConfig}
-                className="min-h-[350px] w-full"
+                className="min-h-[250px] sm:min-h-[350px] w-full"
               >
-                <ResponsiveContainer width="100%" height={350} minHeight={300}>
+                <ResponsiveContainer width="100%" height={300} minHeight={250}>
                   <BarChart
                     data={memoizedChartData}
-                    margin={{ top: 20, bottom: 20, left: 10, right: 10 }}
+                    margin={{ top: 20, bottom: 20, left: 0, right: 0 }}
                     onClick={(data) =>
                       setSelectedMonth(data.activeLabel ?? null)
                     }
@@ -290,7 +290,7 @@ export function CoffeeChart() {
                       tickFormatter={(value) => value.slice(0, 3)}
                       tick={{
                         fill: "hsl(var(--muted-foreground))",
-                        fontSize: 12,
+                        fontSize: 10,
                       }}
                     />
                     <YAxis
@@ -298,9 +298,9 @@ export function CoffeeChart() {
                       axisLine={false}
                       tick={{
                         fill: "hsl(var(--muted-foreground))",
-                        fontSize: 12,
+                        fontSize: 10,
                       }}
-                      width={50}
+                      width={30}
                     />
                     <Tooltip
                       content={<CustomTooltip />}
@@ -328,15 +328,15 @@ export function CoffeeChart() {
               </ChartContainer>
             </motion.div>
           </CardContent>
-          <CardFooter className="bg-muted/20 border-t border-border/10 py-4 flex flex-col gap-4">
+          <CardFooter className="bg-muted/20 border-t border-border/10 py-3 sm:py-4 flex flex-col gap-2 sm:gap-4">
             <motion.div
-              className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs sm:text-sm"
+              className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 text-xs sm:text-sm"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1 }}
             >
               <motion.div
-                className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
+                className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2"
                 whileHover={{ scale: 1.05 }}
               >
                 <motion.div
@@ -344,16 +344,21 @@ export function CoffeeChart() {
                   transition={{ duration: 2, repeat: Infinity }}
                   className="flex items-center gap-1 font-medium"
                 >
-                  Overall consumption: {totalConsumption} cups
+                  <span className="text-xs sm:text-sm">
+                    Overall consumption:
+                  </span>
+                  <span className="font-bold">{totalConsumption} cups</span>
                   <TrendingUp
-                    className="h-4 w-4 sm:h-4 sm:w-4"
+                    className="h-3 w-3 sm:h-4 sm:w-4"
                     aria-hidden="true"
                   />
                 </motion.div>
-                <div className="text-muted-foreground">January - June 2024</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">
+                  January - June 2024
+                </div>
               </motion.div>
               <motion.div
-                className="flex flex-wrap items-center gap-3 sm:gap-4"
+                className="flex flex-wrap items-center gap-2 sm:gap-3"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 1.2 }}
@@ -394,6 +399,7 @@ export function CoffeeChart() {
                       }}
                       transition={{ duration: 0.3 }}
                       aria-label={`${item} indicator`}
+                      className="text-xs sm:text-sm"
                     >
                       {item}
                     </motion.span>
