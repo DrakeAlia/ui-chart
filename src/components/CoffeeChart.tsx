@@ -5,7 +5,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  XAxis,   
+  XAxis,
   YAxis,
   ResponsiveContainer,
   Tooltip,
@@ -215,7 +215,7 @@ export function CoffeeChart() {
         transition={{ duration: 0.3 }}
       >
         <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-background to-background/80 backdrop-blur-sm">
-          <CardHeader className="flex flex-col sm:flex-row items-center gap-2 space-y-2 sm:space-y-0 border-b py-3 sm:py-5 bg-background/50 text-foreground">
+          <CardHeader className="flex flex-col sm:flex-row items-center gap-3 space-y-2 sm:space-y-0 border-b py-4 sm:py-5 bg-background/50 text-foreground">
             <motion.div
               className="text-4xl sm:text-6xl"
               initial={{ opacity: 0, rotate: 0 }}
@@ -238,7 +238,7 @@ export function CoffeeChart() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold">
+                <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold">
                   Global Beverage Trends
                 </CardTitle>
               </motion.div>
@@ -247,13 +247,13 @@ export function CoffeeChart() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
               >
-                <CardDescription className="text-xs sm:text-sm md:text-base text-muted-foreground">
+                <CardDescription className="text-sm sm:text-base md:text-lg text-muted-foreground">
                   Espresso, Latte, and Tea Consumption (Past 6 Months)
                 </CardDescription>
               </motion.div>
             </motion.div>
           </CardHeader>
-          <CardContent className="px-2 sm:px-4 pt-4 sm:pt-6">
+          <CardContent className="px-3 sm:px-4 pt-5 sm:pt-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -267,9 +267,9 @@ export function CoffeeChart() {
             >
               <ChartContainer
                 config={chartConfig}
-                className="min-h-[250px] sm:min-h-[350px] w-full"
+                className="min-h-[300px] sm:min-h-[350px] w-full"
               >
-                <ResponsiveContainer width="100%" height={300} minHeight={250}>
+                <ResponsiveContainer width="100%" height={350} minHeight={300}>
                   <BarChart
                     data={memoizedChartData}
                     margin={{ top: 20, bottom: 20, left: 0, right: 0 }}
@@ -298,9 +298,9 @@ export function CoffeeChart() {
                       axisLine={false}
                       tick={{
                         fill: "hsl(var(--muted-foreground))",
-                        fontSize: 10,
+                        fontSize: 12,
                       }}
-                      width={30}
+                      width={40}
                     />
                     <Tooltip
                       content={<CustomTooltip />}
@@ -328,9 +328,9 @@ export function CoffeeChart() {
               </ChartContainer>
             </motion.div>
           </CardContent>
-          <CardFooter className="bg-muted/20 border-t border-border/10 py-3 sm:py-4 flex flex-col gap-2 sm:gap-4">
+          <CardFooter className="bg-muted/20 border-t border-border/10 py-4 sm:py-5 flex flex-col gap-3 sm:gap-4">
             <motion.div
-              className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 text-xs sm:text-sm"
+              className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 text-sm sm:text-base"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1 }}
@@ -386,7 +386,7 @@ export function CoffeeChart() {
                       {item === "Tea" ? (
                         <Leaf className="h-3 w-3 sm:h-4 sm:w-4" />
                       ) : (
-                        <Coffee className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <Coffee className="h-4 w-4 sm:h-5 sm:w-5" />
                       )}
                     </motion.div>
                     <motion.span
