@@ -5,7 +5,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  XAxis,
+  XAxis,   
   YAxis,
   ResponsiveContainer,
   Tooltip,
@@ -27,7 +27,7 @@ import {
   ChartLegendContent,
 } from "@/components/ui/chart";
 
-import { TrendingUp, Coffee, Leaf, X, Droplet } from "lucide-react";
+import { TrendingUp, Coffee, Leaf, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const chartData = [
