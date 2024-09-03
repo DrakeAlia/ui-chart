@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import {
   Bar,
   BarChart,
@@ -62,6 +63,9 @@ export function CoffeeChart() {
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [totalConsumption, setTotalConsumption] = useState<number>(0);
   const memoizedChartData = useMemo(() => chartData, []);
+
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
+  const isDesktop = useMediaQuery({ minWidth: 1024 });
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
@@ -208,25 +212,15 @@ export function CoffeeChart() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
-      className="relative w-full"
+      className="relative w-full h-full"
     >
       <motion.div
         whileHover={{ y: -5, boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}
         transition={{ duration: 0.3 }}
+        className="h-full"
       >
-        <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-background to-background/80 backdrop-blur-sm">
+        <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-background to-background/80 backdrop-blur-sm h-full flex flex-col">
           <CardHeader className="flex flex-col sm:flex-row items-center gap-3 space-y-2 sm:space-y-0 border-b py-4 sm:py-5 bg-background/50 text-foreground">
-            <motion.div
-              className="text-4xl sm:text-6xl"
-              initial={{ opacity: 0, rotate: 0 }}
-              animate={{ opacity: 1, rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              style={{
-                color: "hsl(var(--primary))",
-              }}
-            >
-              <Coffee />
-            </motion.div>
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -253,7 +247,7 @@ export function CoffeeChart() {
               </motion.div>
             </motion.div>
           </CardHeader>
-          <CardContent className="px-3 sm:px-4 pt-5 sm:pt-6">
+          <CardContent className="px-3 sm:px-4 md:px-6 pt-5 sm:pt-6 md:pt-8 flex-grow flex flex-col">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -264,67 +258,89 @@ export function CoffeeChart() {
                   mousePosition.y * 0.01
                 }px)`,
               }}
+              className="h-full flex flex-col"
             >
               <ChartContainer
                 config={chartConfig}
-                className="min-h-[300px] sm:min-h-[350px] w-full"
+                className="flex-grow min-h-[300px] sm:min-h-[350px] w-full"
               >
-                <ResponsiveContainer width="100%" height={350} minHeight={300}>
-                  <BarChart
-                    data={memoizedChartData}
-                    margin={{ top: 20, bottom: 20, left: 0, right: 0 }}
-                    onClick={(data) =>
-                      setSelectedMonth(data.activeLabel ?? null)
-                    }
-                  >
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      vertical={false}
-                      stroke="hsl(var(--border))"
-                      className="animate-fade-in"
-                    />
-                    <XAxis
-                      dataKey="month"
-                      tickLine={false}
-                      axisLine={false}
-                      tickFormatter={(value) => value.slice(0, 3)}
-                      tick={{
-                        fill: "hsl(var(--muted-foreground))",
-                        fontSize: 10,
+                <div className="flex flex-col h-full">
+                  <ResponsiveContainer width="100%" height="95%">
+                    <BarChart
+                      data={memoizedChartData}
+                      margin={{
+                        top: 20,
+                        right: 30,
+                        bottom: 20,
+                        left: 0,
                       }}
-                    />
-                    <YAxis
-                      tickLine={false}
-                      axisLine={false}
-                      tick={{
-                        fill: "hsl(var(--muted-foreground))",
-                        fontSize: 12,
-                      }}
-                      width={40}
-                    />
-                    <Tooltip
-                      content={<CustomTooltip />}
-                      cursor={{ fill: "hsl(var(--muted))" }}
-                    />
-                    <ChartLegend content={<ChartLegendContent />} />
-                    {["Espresso", "Latte", "Tea"].map((item) => (
-                      <Bar
-                        key={item}
-                        dataKey={item}
-                        fill={
-                          chartConfig[item as keyof typeof chartConfig].color
-                        }
-                        radius={[4, 4, 0, 0]}
-                        onMouseEnter={() => setHoveredBar(item)}
-                        onMouseLeave={() => setHoveredBar(null)}
-                        shape={renderBar}
-                        aria-label={`${item} consumption data`}
-                        tabIndex={0}
-                        onKeyPress={(e) => handleKeyPress(e, item)}
+                      onClick={(data) =>
+                        setSelectedMonth(data.activeLabel ?? null)
+                      }
+                    >
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        vertical={false}
+                        stroke="hsl(var(--border))"
+                        className="animate-fade-in"
                       />
+                      <XAxis
+                        dataKey="month"
+                        tickLine={false}
+                        axisLine={false}
+                        tickFormatter={(value) => value.slice(0, 3)}
+                        tick={{
+                          fill: "hsl(var(--muted-foreground))",
+                          fontSize: 10,
+                        }}
+                      />
+                      <YAxis
+                        tickLine={false}
+                        axisLine={false}
+                        tick={{
+                          fill: "hsl(var(--muted-foreground))",
+                          fontSize: 12,
+                        }}
+                        width={40}
+                      />
+                      <Tooltip
+                        content={<CustomTooltip />}
+                        cursor={{ fill: "hsl(var(--muted))" }}
+                      />
+                      {["Espresso", "Latte", "Tea"].map((item) => (
+                        <Bar
+                          key={item}
+                          dataKey={item}
+                          fill={
+                            chartConfig[item as keyof typeof chartConfig].color
+                          }
+                          radius={[4, 4, 0, 0]}
+                          onMouseEnter={() => setHoveredBar(item)}
+                          onMouseLeave={() => setHoveredBar(null)}
+                          shape={renderBar}
+                          aria-label={`${item} consumption data`}
+                          tabIndex={0}
+                          onKeyPress={(e) => handleKeyPress(e, item)}
+                        />
+                      ))}
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <div className="mt-4 flex justify-center">
+                    {["Espresso", "Latte", "Tea"].map((item) => (
+                      <div key={item} className="flex items-center mx-2">
+                        <div
+                          className="w-3 h-3 mr-1 rounded-sm"
+                          style={{
+                            backgroundColor:
+                              chartConfig[item as keyof typeof chartConfig]
+                                .color,
+                          }}
+                        />
+                        <span className="text-sm">{item}</span>
+                      </div>
                     ))}
-                  </BarChart>
-                </ResponsiveContainer>
+                  </div>
+                </div>
               </ChartContainer>
             </motion.div>
           </CardContent>
