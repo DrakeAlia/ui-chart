@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useMediaQuery } from "react-responsive";
 import {
   Bar,
   BarChart,
@@ -31,6 +30,7 @@ import {
 import { TrendingUp, Coffee, Leaf, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Define the chart data
 const chartData = [
   { month: "January", Espresso: 186, Latte: 80, Tea: 120 },
   { month: "February", Espresso: 305, Latte: 200, Tea: 150 },
@@ -40,6 +40,7 @@ const chartData = [
   { month: "June", Espresso: 214, Latte: 140, Tea: 160 },
 ];
 
+// // Define the chart configuration with colors for each beverage type
 const chartConfig = {
   Espresso: {
     label: "Espresso",
@@ -59,20 +60,21 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function CoffeeChart() {
+  // State variables for the chart
   const [hoveredBar, setHoveredBar] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [totalConsumption, setTotalConsumption] = useState<number>(0);
   const memoizedChartData = useMemo(() => chartData, []);
 
-  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
-  const isDesktop = useMediaQuery({ minWidth: 1024 });
-
+  // State for mouse position (used for subtle animation)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
+  // Handle mouse movement
   const handleMouseMove = (e: React.MouseEvent) => {
     setMousePosition({ x: e.clientX, y: e.clientY });
   };
 
+  // Calculate total consumption on component mount
   useEffect(() => {
     const total = memoizedChartData.reduce(
       (acc, month) => acc + month.Espresso + month.Latte + month.Tea,
@@ -81,6 +83,7 @@ export function CoffeeChart() {
     setTotalConsumption(total);
   }, [memoizedChartData]);
 
+  // Custom tooltip component for the chart
   const CustomTooltip = useCallback(
     ({
       active,
@@ -128,6 +131,7 @@ export function CoffeeChart() {
     []
   );
 
+  // Custom rendering function for chart bars
   const renderBar = useCallback(
     (props: any) => {
       const { fill, x, y, width, height, payload, dataKey } = props;
@@ -137,6 +141,7 @@ export function CoffeeChart() {
 
       return (
         <motion.g>
+          {/* Bar gradient definition */}
           <defs>
             <linearGradient
               id={`gradient-${dataKey}`}
@@ -149,6 +154,7 @@ export function CoffeeChart() {
               <stop offset="100%" stopColor={barColor} stopOpacity={0.3} />
             </linearGradient>
           </defs>
+          {/* Animated bar */}
           <motion.rect
             x={x}
             y={y}
@@ -166,6 +172,7 @@ export function CoffeeChart() {
               transition: { duration: 0.2 },
             }}
           />
+          {/* Hover indicator */}
           {isHovered && (
             <motion.circle
               cx={x + width / 2}
@@ -183,6 +190,7 @@ export function CoffeeChart() {
     [hoveredBar, selectedMonth]
   );
 
+  // Handle keyboard interactions for accessibility
   const handleKeyPress = useCallback(
     (event: React.KeyboardEvent, month: string) => {
       if (event.key === "Enter" || event.key === " ") {
@@ -192,10 +200,12 @@ export function CoffeeChart() {
     []
   );
 
+  // Reset selected month
   const handleReset = () => {
     setSelectedMonth(null);
   };
 
+  // Render a message if no data is available
   if (!memoizedChartData || memoizedChartData.length === 0) {
     return (
       <Card className="p-6 text-center">
@@ -247,6 +257,7 @@ export function CoffeeChart() {
               </motion.div>
             </motion.div>
           </CardHeader>
+          {/* Card Content (Chart) */}
           <CardContent className="px-3 sm:px-4 md:px-6 pt-5 sm:pt-6 md:pt-8 flex-grow flex flex-col">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -278,6 +289,7 @@ export function CoffeeChart() {
                         setSelectedMonth(data.activeLabel ?? null)
                       }
                     >
+                      {/* Chart components (CartesianGrid, XAxis, YAxis, Tooltip, Bars) */}
                       <CartesianGrid
                         strokeDasharray="3 3"
                         vertical={false}
@@ -325,7 +337,9 @@ export function CoffeeChart() {
                       ))}
                     </BarChart>
                   </ResponsiveContainer>
+                  {/* Chart Legend */}
                   <div className="mt-4 flex justify-center">
+                    {/* Legend items */}
                     {["Espresso", "Latte", "Tea"].map((item) => (
                       <div key={item} className="flex items-center mx-2">
                         <div
@@ -345,6 +359,7 @@ export function CoffeeChart() {
             </motion.div>
           </CardContent>
           <CardFooter className="bg-muted/20 border-t border-border/10 py-4 sm:py-5 flex flex-col gap-3 sm:gap-4">
+            {/* Footer content (total consumption, beverage icons) */}
             <motion.div
               className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 text-sm sm:text-base"
               initial={{ opacity: 0, y: 20 }}
@@ -423,6 +438,7 @@ export function CoffeeChart() {
                 ))}
               </motion.div>
             </motion.div>
+            {/* Selected month display */}
             <AnimatePresence>
               {selectedMonth && (
                 <motion.div
